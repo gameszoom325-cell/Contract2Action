@@ -1,0 +1,532 @@
+import { User, ContractDocument, ExtractedObligation, TaskItem, AuditLogEntry } from '../types/contract.ts';
+
+export const DEMO_USERS: User[] = [
+  {
+    id: 'user_admin',
+    name: 'Eleanor Vance',
+    email: 'admin@contract2action.ai',
+    role: 'Admin',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+    title: 'Chief Compliance & Risk Officer',
+  },
+  {
+    id: 'user_manager',
+    name: 'Marcus Chen',
+    email: 'manager@contract2action.ai',
+    role: 'Manager',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+    title: 'VP Operations & Procurement',
+  },
+  {
+    id: 'user_approver',
+    name: 'Sophia Sterling',
+    email: 'approver@contract2action.ai',
+    role: 'Approver',
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80',
+    title: 'Senior Commercial Legal Counsel',
+  },
+  {
+    id: 'user_employee',
+    name: 'David Okafor',
+    email: 'employee@contract2action.ai',
+    role: 'Employee',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
+    title: 'Lead Implementation Engineer',
+  },
+];
+
+export const SAMPLE_CONTRACTS: ContractDocument[] = [
+  {
+    id: 'contract_msa_01',
+    title: 'Master Services Agreement - Apex Cloud & Titan Enterprises',
+    fileName: 'ApexCloud_Titan_MSA_2026.pdf',
+    fileSize: '2.4 MB',
+    uploadDate: '2026-10-10',
+    uploadedBy: 'Marcus Chen',
+    category: 'Cloud Infrastructure & Engineering',
+    parties: ['Titan Enterprises Inc. (Client)', 'Apex Cloud Solutions LLC (Vendor)'],
+    totalValue: '$180,000 USD',
+    effectiveDate: '2026-10-01',
+    expiryDate: '2027-09-30',
+    status: 'Ready for Review',
+    obligationsCount: 6,
+    approvedCount: 3,
+    highRiskCount: 2,
+    confidenceAvg: 0.94,
+    fullText: `MASTER SERVICES AGREEMENT (MSA)
+Contract Reference: AC-TE-2026-09
+Effective Date: October 1, 2026
+
+This Master Services Agreement ("Agreement") is made between Titan Enterprises Inc. ("Client") and Apex Cloud Solutions LLC ("Vendor").
+
+SECTION 1. SCOPE OF SERVICES & DELIVERABLES
+1.1 Deliverables Schedule. The Vendor shall deliver the Stage 1 Core Cloud Architecture Migration and Infrastructure Deployment Plan ("Milestone 1 Deliverable") no later than October 25, 2026.
+1.2 Delivery Format. All deliverables must include full Terraform infrastructure-as-code manifests, architecture topology diagrams, and automated staging test suites.
+
+SECTION 2. INSPECTION, ACCEPTANCE & PRECONDITIONS
+2.1 Client Inspection Period. Upon receipt of Milestone 1 Deliverable, Client shall have exactly ten (10) business days ("Inspection Window", ending November 6, 2026) to conduct security vulnerability assessments and integration acceptance testing.
+2.2 Written Acceptance Certificate. Formal sign-off requires a signed Acceptance Certificate from Client's Technical Project Lead. Payment shall strictly remain conditional upon issuance of this Acceptance Certificate.
+
+SECTION 3. INVOICING & PAYMENT TERMS
+3.1 Milestone 1 Consideration. Upon successful delivery and written acceptance of Milestone 1, Client shall pay Vendor forty-five thousand US Dollars ($45,000.00 USD).
+3.2 Payment Due Date. Invoices for accepted milestones are payable net thirty (30) calendar days from receipt of a verified invoice accompanied by the signed Acceptance Certificate (Due Date: December 6, 2026).
+3.3 Late Payment Interest. Late undisputed payments shall accrue interest at 1.5% per month or the statutory maximum.
+
+SECTION 4. SERVICE LEVEL AGREEMENT & DELAY PENALTIES
+4.1 System Availability SLA. Vendor guarantees 99.9% monthly production cloud uptime.
+4.2 Delivery Delay Liquidated Damages. For any unexcused delay beyond the agreed milestone delivery date exceeding a 5-day grace period, Vendor shall incur liquidated damages of five hundred US Dollars ($500.00 USD) per calendar day of delay, deductible from the milestone payment.
+
+SECTION 5. SECURITY, COMPLIANCE & SOC 2 AUDIT
+5.1 Annual SOC 2 Type II Audit. Vendor shall provide Client with an independent third-party SOC 2 Type II compliance audit report covering Security, Confidentiality, and Availability within forty-five (45) days of Agreement execution (Due Date: November 15, 2026). Failure to provide this report constitutes a material breach.
+
+SECTION 6. CONFIDENTIALITY & DATA PROTECTION
+6.1 Non-Disclosure. Both parties agree to protect proprietary data with standard reasonable care. All obligations under this Section survive termination for five (5) years.
+6.2 Breach Notification. In the event of an unauthorized data access or security incident, Vendor must notify Client in writing within forty-eight (48) hours of discovery.
+
+SECTION 7. TERMINATION & NOTICES
+7.1 Termination for Convenience. Either party may terminate this Agreement without cause by giving thirty (30) calendar days prior written notice to the designated commercial representative.`,
+  },
+  {
+    id: 'contract_saas_02',
+    title: 'Enterprise SaaS Vendor Agreement - DataVault AI & Horizon Global',
+    fileName: 'DataVault_Horizon_SaaS_2026.docx',
+    fileSize: '1.8 MB',
+    uploadDate: '2026-10-12',
+    uploadedBy: 'Eleanor Vance',
+    category: 'Software-as-a-Service',
+    parties: ['Horizon Global Corp (Subscriber)', 'DataVault AI Ltd (Provider)'],
+    totalValue: '$120,000 USD / yr',
+    effectiveDate: '2026-11-01',
+    expiryDate: '2027-10-31',
+    status: 'Ready for Review',
+    obligationsCount: 4,
+    approvedCount: 2,
+    highRiskCount: 1,
+    confidenceAvg: 0.91,
+    fullText: `ENTERPRISE SAAS SUBSCRIPTION AGREEMENT
+Contract Ref: DV-HG-8841
+Effective: November 1, 2026
+
+SECTION 2. SUBSCRIPTION FEES
+2.1 Annual License Fee. Subscriber agrees to pay an annual subscription fee of one hundred twenty thousand US Dollars ($120,000.00 USD) payable net 30 days from agreement execution (Due Date: December 1, 2026).
+
+SECTION 4. DISASTER RECOVERY & BUSINESS CONTINUITY
+4.1 RTO & RPO Targets. Provider guarantees a Recovery Time Objective (RTO) of not more than four (4) hours and a Recovery Point Objective (RPO) of not more than one (1) hour. Provider shall conduct a failover simulation test quarterly and provide proof to Subscriber within ten (10) business days of test completion.
+
+SECTION 8. DATA PRIVACY & GDPR COMPLIANCE
+8.1 High Risk Security Notification. Provider shall notify Subscriber's Chief Information Security Officer within 24 hours of any suspected intrusion or unauthorized breach of Subscriber data. Provider agrees to indemnify Subscriber for all direct regulatory fines resulting from Provider gross negligence.`,
+  },
+  {
+    id: 'contract_lease_03',
+    title: 'Commercial Facility Lease Agreement - MetroTech Tower 4',
+    fileName: 'MetroTech_Tower4_Suite1200_Lease.pdf',
+    fileSize: '3.1 MB',
+    uploadDate: '2026-10-14',
+    uploadedBy: 'Marcus Chen',
+    category: 'Real Estate & Facilities',
+    parties: ['MetroTech Properties Trust (Landlord)', 'Titan Enterprises Inc. (Tenant)'],
+    totalValue: '$222,000 USD / yr',
+    effectiveDate: '2026-11-01',
+    expiryDate: '2028-10-31',
+    status: 'Parsed',
+    obligationsCount: 4,
+    approvedCount: 1,
+    highRiskCount: 1,
+    confidenceAvg: 0.88,
+    fullText: `COMMERCIAL REAL ESTATE LEASE AGREEMENT
+Premises: Suite 1200, MetroTech Tower 4, Austin TX
+
+SECTION 3. RENT & SECURITY DEPOSIT
+3.1 Base Rent. Tenant shall pay Landlord a monthly base rent of eighteen thousand five hundred US Dollars ($18,500.00 USD) in advance on or before the first (1st) day of each calendar month.
+3.2 Security Deposit. Tenant shall deposit thirty-seven thousand US Dollars ($37,000.00 USD) upon signing, returnable within thirty (30) days of lease expiration subject to final exit inspection.
+
+SECTION 7. MAINTENANCE & HVAC CERTIFICATION
+7.1 Preventive Maintenance. Tenant shall engage a certified technician to inspect and service the specialized server room HVAC systems every quarter (Due: December 15, 2026) and submit copies of the maintenance logs to Landlord.`,
+  }
+];
+
+export const SEED_OBLIGATIONS: ExtractedObligation[] = [
+  // Contract 1: MSA Apex Cloud & Titan Enterprises
+  {
+    id: 'obl_msa_01',
+    contract_id: 'contract_msa_01',
+    clause_reference: 'Section 1.1',
+    page: 1,
+    source_quote: 'The Vendor shall deliver the Stage 1 Core Cloud Architecture Migration and Infrastructure Deployment Plan ("Milestone 1 Deliverable") no later than October 25, 2026.',
+    obligated_party: 'Apex Cloud Solutions LLC (Vendor)',
+    obligation_summary: 'Deliver Stage 1 Core Cloud Architecture and Infrastructure Deployment Plan.',
+    type: 'Delivery',
+    deadline: 'October 25, 2026',
+    normalized_due_date: '2026-10-25',
+    risk_level: 'Medium',
+    risk_reason: 'Core dependency for entire migration timeline; delays trigger financial liquidated damages.',
+    confidence: 0.98,
+    needs_review: false,
+    suggested_task: {
+      title: 'Milestone 1: Deliver Stage 1 Cloud Architecture Plan',
+      description: 'Review and receive Terraform code, architecture topology, and staging manifests from Apex Cloud Solutions.',
+      owner_role: 'Employee',
+      due_date: '2026-10-25',
+      priority: 'High',
+    },
+    approval_status: 'Approved',
+    approval_comment: 'Approved standard operational delivery milestone.',
+    reviewed_by: 'Sophia Sterling',
+    reviewed_at: '2026-10-11T14:30:00Z',
+    task_id: 'task_01',
+  },
+  {
+    id: 'obl_msa_02',
+    contract_id: 'contract_msa_01',
+    clause_reference: 'Section 2.1',
+    page: 1,
+    source_quote: 'Upon receipt of Milestone 1 Deliverable, Client shall have exactly ten (10) business days ("Inspection Window", ending November 6, 2026) to conduct security vulnerability assessments and integration acceptance testing.',
+    obligated_party: 'Titan Enterprises Inc. (Client)',
+    obligation_summary: 'Conduct security vulnerability and integration acceptance testing within 10 business days.',
+    type: 'Inspection',
+    deadline: 'November 6, 2026',
+    normalized_due_date: '2026-11-06',
+    risk_level: 'Medium',
+    risk_reason: 'Failure to inspect in window may imply automatic deemed acceptance under standard UCC guidelines.',
+    confidence: 0.95,
+    needs_review: false,
+    preconditions: ['obl_msa_01'],
+    suggested_task: {
+      title: 'Perform Milestone 1 Acceptance Testing & Inspection Sign-Off',
+      description: 'Execute automated security vulnerability scan and integration tests. Sign formal Acceptance Certificate upon passing.',
+      owner_role: 'Employee',
+      due_date: '2026-11-06',
+      priority: 'High',
+    },
+    approval_status: 'Approved',
+    approval_comment: 'Approved. David Okafor assigned as technical tester.',
+    reviewed_by: 'Sophia Sterling',
+    reviewed_at: '2026-10-11T14:32:00Z',
+    task_id: 'task_02',
+  },
+  {
+    id: 'obl_msa_03',
+    contract_id: 'contract_msa_01',
+    clause_reference: 'Section 3.1 & 3.2',
+    page: 1,
+    source_quote: 'Upon successful delivery and written acceptance of Milestone 1, Client shall pay Vendor forty-five thousand US Dollars ($45,000.00 USD). Invoices for accepted milestones are payable net thirty (30) calendar days from receipt of a verified invoice accompanied by the signed Acceptance Certificate (Due Date: December 6, 2026).',
+    obligated_party: 'Titan Enterprises Inc. (Client)',
+    obligation_summary: 'Release $45,000 milestone payment net 30 days strictly conditioned on signed Acceptance Certificate.',
+    type: 'Payment',
+    deadline: 'December 6, 2026',
+    normalized_due_date: '2026-12-06',
+    amount: 45000,
+    currency: 'USD',
+    conditions: 'Preconditions: Delivery of Milestone 1 and signed Acceptance Certificate from Client Inspection.',
+    risk_level: 'High',
+    risk_reason: 'High financial disbursement ($45,000 USD). Must remain hard-locked until Acceptance Certificate is signed.',
+    confidence: 0.97,
+    needs_review: false,
+    preconditions: ['obl_msa_01', 'obl_msa_02'],
+    suggested_task: {
+      title: 'Disburse Milestone 1 Payment ($45,000 USD) - Apex Cloud',
+      description: 'Process AP invoice 45000 USD after verifying signed inspection acceptance certificate.',
+      owner_role: 'Approver',
+      due_date: '2026-12-06',
+      priority: 'Urgent',
+    },
+    approval_status: 'Approved',
+    approval_comment: 'Approved with conditional lock: payment disbursement cannot be executed until inspection task is completed.',
+    reviewed_by: 'Sophia Sterling',
+    reviewed_at: '2026-10-11T14:35:00Z',
+    task_id: 'task_03',
+  },
+  {
+    id: 'obl_msa_04',
+    contract_id: 'contract_msa_01',
+    clause_reference: 'Section 5.1',
+    page: 2,
+    source_quote: 'Vendor shall provide Client with an independent third-party SOC 2 Type II compliance audit report covering Security, Confidentiality, and Availability within forty-five (45) days of Agreement execution (Due Date: November 15, 2026). Failure to provide this report constitutes a material breach.',
+    obligated_party: 'Apex Cloud Solutions LLC (Vendor)',
+    obligation_summary: 'Vendor must provide third-party SOC 2 Type II compliance audit report by November 15, 2026.',
+    type: 'Compliance',
+    deadline: 'November 15, 2026',
+    normalized_due_date: '2026-11-15',
+    risk_level: 'High',
+    risk_reason: 'Material breach clause: Failure to provide SOC 2 Type II report exposes client to regulatory audit non-compliance.',
+    confidence: 0.94,
+    needs_review: false,
+    suggested_task: {
+      title: 'Audit & Verify Vendor SOC 2 Type II Report',
+      description: 'Receive and conduct legal & InfoSec audit review of Apex Cloud annual SOC 2 Type II report.',
+      owner_role: 'Approver',
+      due_date: '2026-11-15',
+      priority: 'High',
+    },
+    approval_status: 'Pending', // Pending human approval in queue!
+  },
+  {
+    id: 'obl_msa_05',
+    contract_id: 'contract_msa_01',
+    clause_reference: 'Section 4.2',
+    page: 2,
+    source_quote: 'For any unexcused delay beyond the agreed milestone delivery date exceeding a 5-day grace period, Vendor shall incur liquidated damages of five hundred US Dollars ($500.00 USD) per calendar day of delay, deductible from the milestone payment.',
+    obligated_party: 'Apex Cloud Solutions LLC (Vendor)',
+    obligation_summary: 'Assess liquidated damages of $500/day for unexcused milestone delivery delay exceeding 5-day grace period.',
+    type: 'SLA',
+    deadline: '5 days post October 25, 2026',
+    normalized_due_date: '2026-10-30',
+    amount: 500,
+    currency: 'USD/day',
+    risk_level: 'Medium',
+    risk_reason: 'Financial penalty deduction; requires exact tracking of delivery timestamps.',
+    confidence: 0.92,
+    needs_review: false,
+    suggested_task: {
+      title: 'Monitor Delivery SLA & Track Grace Period Deductions',
+      description: 'Calculate penalty deductions if Milestone 1 delivery exceeds October 30, 2026.',
+      owner_role: 'Manager',
+      due_date: '2026-10-30',
+      priority: 'Medium',
+    },
+    approval_status: 'Pending',
+  },
+  {
+    id: 'obl_msa_06',
+    contract_id: 'contract_msa_01',
+    clause_reference: 'Section 6.2',
+    page: 2,
+    source_quote: 'In the event of an unauthorized data access or security incident, Vendor must notify Client in writing within forty-eight (48) hours of discovery.',
+    obligated_party: 'Apex Cloud Solutions LLC (Vendor)',
+    obligation_summary: 'Provide written incident notification within 48 hours of any suspected breach.',
+    type: 'Reporting',
+    deadline: 'Within 48 hours of security incident',
+    normalized_due_date: '2026-10-20',
+    risk_level: 'High',
+    risk_reason: 'Time-critical compliance requirement; required for GDPR/CCPA notification windows.',
+    confidence: 0.89,
+    needs_review: true,
+    suggested_task: {
+      title: 'Setup 48-Hour Security Breach Protocol Channel',
+      description: 'Establish direct automated encrypted channel for 48-hour security notice with Vendor CISO.',
+      owner_role: 'Approver',
+      due_date: '2026-10-20',
+      priority: 'Urgent',
+    },
+    approval_status: 'Needs Review',
+  },
+
+  // Contract 2: SaaS DataVault
+  {
+    id: 'obl_saas_01',
+    contract_id: 'contract_saas_02',
+    clause_reference: 'Section 2.1',
+    page: 1,
+    source_quote: 'Subscriber agrees to pay an annual subscription fee of one hundred twenty thousand US Dollars ($120,000.00 USD) payable net 30 days from agreement execution (Due Date: December 1, 2026).',
+    obligated_party: 'Horizon Global Corp (Subscriber)',
+    obligation_summary: 'Pay annual SaaS subscription fee of $120,000 USD net 30 days.',
+    type: 'Payment',
+    deadline: 'December 1, 2026',
+    normalized_due_date: '2026-12-01',
+    amount: 120000,
+    currency: 'USD',
+    risk_level: 'High',
+    risk_reason: 'High capital expenditure ($120,000). Requires VP Procurement sign-off.',
+    confidence: 0.99,
+    needs_review: false,
+    suggested_task: {
+      title: 'Approve & Release Annual SaaS License ($120,000 USD)',
+      description: 'Verify license tier allocation and authorize finance team for annual payment.',
+      owner_role: 'Approver',
+      due_date: '2026-12-01',
+      priority: 'High',
+    },
+    approval_status: 'Approved',
+    approval_comment: 'Approved annual contract budget allocation.',
+    reviewed_by: 'Marcus Chen',
+    reviewed_at: '2026-10-13T10:15:00Z',
+    task_id: 'task_04',
+  },
+  {
+    id: 'obl_saas_02',
+    contract_id: 'contract_saas_02',
+    clause_reference: 'Section 4.1',
+    page: 1,
+    source_quote: 'Provider shall conduct a failover simulation test quarterly and provide proof to Subscriber within ten (10) business days of test completion.',
+    obligated_party: 'DataVault AI Ltd (Provider)',
+    obligation_summary: 'Provide quarterly disaster recovery failover test report within 10 business days of completion.',
+    type: 'Compliance',
+    deadline: 'Quarterly (First due December 15, 2026)',
+    normalized_due_date: '2026-12-15',
+    risk_level: 'Medium',
+    risk_reason: 'Business continuity compliance required by insurance policy.',
+    confidence: 0.91,
+    needs_review: false,
+    suggested_task: {
+      title: 'Inspect Q4 Disaster Recovery Failover Report',
+      description: 'Review RTO/RPO metrics and failover verification from DataVault operations team.',
+      owner_role: 'Employee',
+      due_date: '2026-12-15',
+      priority: 'Medium',
+    },
+    approval_status: 'Pending',
+  }
+];
+
+export const SEED_TASKS: TaskItem[] = [
+  {
+    id: 'task_01',
+    contract_id: 'contract_msa_01',
+    contract_title: 'Master Services Agreement - Apex Cloud & Titan Enterprises',
+    obligation_id: 'obl_msa_01',
+    clause_reference: 'Section 1.1',
+    page: 1,
+    source_quote: 'The Vendor shall deliver the Stage 1 Core Cloud Architecture Migration and Infrastructure Deployment Plan ("Milestone 1 Deliverable") no later than October 25, 2026.',
+    title: 'Milestone 1: Deliver Stage 1 Cloud Architecture Plan',
+    description: 'Review and receive Terraform code, architecture topology, and staging manifests from Apex Cloud Solutions.',
+    type: 'Delivery',
+    status: 'In Progress',
+    priority: 'High',
+    assigned_role: 'Employee',
+    assigned_user: 'user_employee',
+    due_date: '2026-10-25',
+    is_locked: false,
+    prerequisites: [],
+    created_at: '2026-10-11T14:30:00Z',
+    updated_at: '2026-10-14T09:00:00Z',
+  },
+  {
+    id: 'task_02',
+    contract_id: 'contract_msa_01',
+    contract_title: 'Master Services Agreement - Apex Cloud & Titan Enterprises',
+    obligation_id: 'obl_msa_02',
+    clause_reference: 'Section 2.1',
+    page: 1,
+    source_quote: 'Upon receipt of Milestone 1 Deliverable, Client shall have exactly ten (10) business days ("Inspection Window", ending November 6, 2026) to conduct security vulnerability assessments and integration acceptance testing.',
+    title: 'Perform Milestone 1 Acceptance Testing & Inspection Sign-Off',
+    description: 'Execute automated security vulnerability scan and integration tests. Sign formal Acceptance Certificate upon passing.',
+    type: 'Inspection',
+    status: 'To Do',
+    priority: 'High',
+    assigned_role: 'Employee',
+    assigned_user: 'user_employee',
+    due_date: '2026-11-06',
+    is_locked: true,
+    lock_reason: 'Waiting for prerequisite: Milestone 1: Deliver Stage 1 Cloud Architecture Plan (in progress)',
+    prerequisites: ['task_01'],
+    created_at: '2026-10-11T14:32:00Z',
+    updated_at: '2026-10-11T14:32:00Z',
+  },
+  {
+    id: 'task_03',
+    contract_id: 'contract_msa_01',
+    contract_title: 'Master Services Agreement - Apex Cloud & Titan Enterprises',
+    obligation_id: 'obl_msa_03',
+    clause_reference: 'Section 3.1 & 3.2',
+    page: 1,
+    source_quote: 'Upon successful delivery and written acceptance of Milestone 1, Client shall pay Vendor forty-five thousand US Dollars ($45,000.00 USD). Invoices for accepted milestones are payable net thirty (30) calendar days from receipt of a verified invoice accompanied by the signed Acceptance Certificate (Due Date: December 6, 2026).',
+    title: 'Disburse Milestone 1 Payment ($45,000 USD) - Apex Cloud',
+    description: 'Process AP invoice 45000 USD after verifying signed inspection acceptance certificate.',
+    type: 'Payment',
+    status: 'Blocked',
+    priority: 'Urgent',
+    assigned_role: 'Approver',
+    assigned_user: 'user_approver',
+    due_date: '2026-12-06',
+    amount: 45000,
+    currency: 'USD',
+    is_locked: true,
+    lock_reason: 'Preconditions not met: Requires completion of Milestone 1 Delivery AND Signed Inspection Acceptance',
+    prerequisites: ['task_01', 'task_02'],
+    created_at: '2026-10-11T14:35:00Z',
+    updated_at: '2026-10-11T14:35:00Z',
+  },
+  {
+    id: 'task_04',
+    contract_id: 'contract_saas_02',
+    contract_title: 'Enterprise SaaS Vendor Agreement - DataVault AI & Horizon Global',
+    obligation_id: 'obl_saas_01',
+    clause_reference: 'Section 2.1',
+    page: 1,
+    source_quote: 'Subscriber agrees to pay an annual subscription fee of one hundred twenty thousand US Dollars ($120,000.00 USD) payable net 30 days from agreement execution (Due Date: December 1, 2026).',
+    title: 'Approve & Release Annual SaaS License ($120,000 USD)',
+    description: 'Verify license tier allocation and authorize finance team for annual payment.',
+    type: 'Payment',
+    status: 'In Progress',
+    priority: 'High',
+    assigned_role: 'Manager',
+    assigned_user: 'user_manager',
+    due_date: '2026-12-01',
+    amount: 120000,
+    currency: 'USD',
+    is_locked: false,
+    prerequisites: [],
+    created_at: '2026-10-13T10:15:00Z',
+    updated_at: '2026-10-14T11:00:00Z',
+  }
+];
+
+export const SEED_AUDIT_LOGS: AuditLogEntry[] = [
+  {
+    id: 'audit_01',
+    timestamp: '2026-10-10T09:14:22Z',
+    userId: 'user_manager',
+    userName: 'Marcus Chen',
+    userRole: 'Manager',
+    action: 'UPLOAD_CONTRACT',
+    targetType: 'Contract',
+    targetId: 'contract_msa_01',
+    details: 'Uploaded contract ApexCloud_Titan_MSA_2026.pdf (2.4 MB) to staging pipeline.',
+  },
+  {
+    id: 'audit_02',
+    timestamp: '2026-10-10T09:15:05Z',
+    userId: 'user_admin',
+    userName: 'Eleanor Vance',
+    userRole: 'Admin',
+    action: 'EXTRACT_OBLIGATIONS',
+    targetType: 'Obligation',
+    targetId: 'contract_msa_01',
+    details: 'AI extraction completed via Gemini 2.5 Pro. Extracted 6 obligations with 0.94 avg confidence.',
+  },
+  {
+    id: 'audit_03',
+    timestamp: '2026-10-11T14:30:00Z',
+    userId: 'user_approver',
+    userName: 'Sophia Sterling',
+    userRole: 'Approver',
+    action: 'APPROVE_OBLIGATION',
+    targetType: 'Obligation',
+    targetId: 'obl_msa_01',
+    clauseReference: 'Section 1.1',
+    page: 1,
+    details: 'Approved delivery obligation for Milestone 1. Generated Task task_01.',
+    beforeValue: { approval_status: 'Pending' },
+    afterValue: { approval_status: 'Approved', task_id: 'task_01' },
+  },
+  {
+    id: 'audit_04',
+    timestamp: '2026-10-11T14:32:00Z',
+    userId: 'user_approver',
+    userName: 'Sophia Sterling',
+    userRole: 'Approver',
+    action: 'APPROVE_OBLIGATION',
+    targetType: 'Obligation',
+    targetId: 'obl_msa_02',
+    clauseReference: 'Section 2.1',
+    page: 1,
+    details: 'Approved inspection acceptance obligation. Enforced conditional link to Milestone 1 delivery.',
+    beforeValue: { approval_status: 'Pending' },
+    afterValue: { approval_status: 'Approved', task_id: 'task_02' },
+  },
+  {
+    id: 'audit_05',
+    timestamp: '2026-10-11T14:35:00Z',
+    userId: 'user_approver',
+    userName: 'Sophia Sterling',
+    userRole: 'Approver',
+    action: 'APPROVE_OBLIGATION',
+    targetType: 'Obligation',
+    targetId: 'obl_msa_03',
+    clauseReference: 'Section 3.1 & 3.2',
+    page: 1,
+    details: 'High-risk financial approval ($45,000 USD) approved with written rationale. Preconditions attached.',
+    beforeValue: { approval_status: 'Pending' },
+    afterValue: { approval_status: 'Approved', task_id: 'task_03', is_locked: true },
+  },
+];
